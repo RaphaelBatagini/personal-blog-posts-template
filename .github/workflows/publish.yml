@@ -1,0 +1,23 @@
+name: publish_posts
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    env:
+      BLOG_REPO: ${{ secrets.BLOG_REPO }}
+      ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Test
+        run: |
+          curl -X POST https://api.github.com/repos/$BLOG_REPO/dispatches \
+          -H 'Accept: application/vnd.github.everest-preview+json' \
+          -u $ACCESS_TOKEN \
+          --data '{"event_type": "Publishing or updating articles", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
+      - uses: actions/checkout@v3
